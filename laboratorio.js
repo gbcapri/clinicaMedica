@@ -5,6 +5,8 @@ let consulta = {
     medico: "",
 };
 let opcao = 'menu';
+let pacienteSendoAtua = -1;
+let pacienteRemovido = false;
 
 console.log("Bem vindo ao laboratório");
 
@@ -20,6 +22,14 @@ process.stdin.on("data", function(data){
     data = data.toString().trim();
 
     if(opcao === 'menu'){
+        
+        console.log(
+            "O que você deseja fazer?"+
+            "\n1- Fazer uma nova consulta"+
+            "\n2- listar as consultas existentes"+
+            "\n3- Atualizar uma consulta existente"+
+            "\n4- Cancelar uma consulta"+
+            "\n5- sair");
         switch(+data){
             case 1:
                 opcao = 'adicionar';
@@ -38,6 +48,13 @@ process.stdin.on("data", function(data){
                         );
                     }
                 }
+                console.log(
+                    "O que você deseja fazer?"+
+                    "\n1- Fazer uma nova consulta"+
+                    "\n2- listar as consultas existentes"+
+                    "\n3- Atualizar uma consulta existente"+
+                    "\n4- Cancelar uma consulta"+
+                    "\n5- sair");
                 return;
             case 3:
                 opcao = 'atualizar';
@@ -53,7 +70,7 @@ process.stdin.on("data", function(data){
             default:
                 console.log("caractere inválido")
         }
-        return;consulta
+        return;
     }
 //--------------------------------------------------------------------------------------------------------
     if(opcao == 'adicionar'){
@@ -86,31 +103,38 @@ process.stdin.on("data", function(data){
             consulta.medico = medico;
             consultasProgramadas.push({ ...consulta});
             opcao = 'menu';
+            console.log(
+                "O que você deseja fazer?"+
+                "\n1- Fazer uma nova consulta"+
+                "\n2- listar as consultas existentes"+
+                "\n3- Atualizar uma consulta existente"+
+                "\n4- Cancelar uma consulta"+
+                "\n5- sair");
         }else{
             console.log("insira o nome do médico com mais de uma letra");
         }
         return;
-    }alternar
+    }
 //--------------------------------------------------------------------------------------------------------
-if (opcao === 'atualizar') {
-    let encontrado = false;
-    for (let i = 0; i < consultasProgramadas.length; i++) {
-        if (consultasProgramadas[i].nomePaciente.toLowerCase() === data.toLowerCase()) {
-            encontrado = true;
-            console.log("Consulta encontrada:");
-            console.log("Nome: " + consultasProgramadas[i].nomePaciente);
-            console.log("Deseja alterar o nome do paciente? (s/n)");
-            opcao = 'atualizarNome';
-            indiceConsultaAtual = i;
-            break;
+    if (opcao === 'atualizar') {
+        let encontrado = false;
+        for (let i = 0; i < consultasProgramadas.length; i++) {
+            if (consultasProgramadas[i].nomePaciente.toLowerCase() === data.toLowerCase()) {
+                encontrado = true;
+                console.log("Consulta encontrada:");
+                console.log(consultasProgramadas[i]);
+                console.log("Deseja alterar o nome do paciente? (s/n)");
+                opcao = 'atualizarNome';
+                pacienteSendoAtua = i;
+                break;
+            }
         }
+        if (!encontrado) {
+            console.log("Paciente não encontrado.");
+            opcao = 'menu';
+        }
+        return;
     }
-    if (!encontrado) {
-        console.log("Paciente não encontrado.");
-        opcao = 'menu';
-    }
-    return;
-}
 
 if (opcao === 'atualizarNome') {
     if (data.toLowerCase() === 's') {
@@ -124,7 +148,7 @@ if (opcao === 'atualizarNome') {
 }
 
 if (opcao === 'novoNome') {
-    consultasProgramadas[indiceConsultaAtual].nomePaciente = data;
+    consultasProgramadas[pacienteSendoAtua].nomePaciente = data;
     console.log("Deseja alterar o dia da consulta? (s/n)");
     opcao = 'atualizarDia';
     return;
@@ -143,7 +167,7 @@ if (opcao === 'atualizarDia') {
 
 if (opcao === 'novoDia') {
     if (data.length == 10) {
-        consultasProgramadas[indiceConsultaAtual].dia = data;
+        consultasProgramadas[pacienteSendoAtua].dia = data;
         console.log("Deseja alterar o médico responsável? (s/n)");
         opcao = 'atualizarMedico';
     } else {
@@ -159,26 +183,47 @@ if (opcao === 'atualizarMedico') {
     } else {
         console.log("Consulta atualizada com sucesso.");
         opcao = 'menu';
+        console.log(
+            "O que você deseja fazer?"+
+            "\n1- Fazer uma nova consulta"+
+            "\n2- listar as consultas existentes"+
+            "\n3- Atualizar uma consulta existente"+
+            "\n4- Cancelar uma consulta"+
+            "\n5- sair");
     }
     return;
 }
 
 if (opcao === 'novoMedico') {
-    consultasProgramadas[indiceConsultaAtual].medico = data;
+    consultasProgramadas[pacienteSendoAtua].medico = data;
     console.log("Consulta atualizada com sucesso.");
     opcao = 'menu';
+    console.log(
+        "O que você deseja fazer?"+
+        "\n1- Fazer uma nova consulta"+
+        "\n2- listar as consultas existentes"+
+        "\n3- Atualizar uma consulta existente"+
+        "\n4- Cancelar uma consulta"+
+        "\n5- sair");
     return;
 }
 
 //--------------------------------------------------------------------------------------------------------
 
     if(opcao == 'remover'){
-        let pacienteRemovido = false;
+        
         for (let i = 0; i < consultasProgramadas.length; i++) {
             if(consultasProgramadas[i].nomePaciente.toLowerCase() === data.toLowerCase()){
                 consultasProgramadas.splice(i, 1);// o 1 é a quantidade e o primeiro é a posição
                 pacienteRemovido = true;
                 console.log("paciente removido com sucesso.");
+                console.log(
+                    "O que você deseja fazer?"+
+                    "\n1- Fazer uma nova consulta"+
+                    "\n2- listar as consultas existentes"+
+                    "\n3- Atualizar uma consulta existente"+
+                    "\n4- Cancelar uma consulta"+
+                    "\n5- sair");
                 break;
             }
         }
@@ -187,5 +232,12 @@ if (opcao === 'novoMedico') {
         console.log("paciente não encontrado.");
     }
     opcao = 'menu';
+    console.log(
+        "O que você deseja fazer?"+
+        "\n1- Fazer uma nova consulta"+
+        "\n2- listar as consultas existentes"+
+        "\n3- Atualizar uma consulta existente"+
+        "\n4- Cancelar uma consulta"+
+        "\n5- sair");
     return;
 });
